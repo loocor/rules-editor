@@ -13,8 +13,8 @@ import { Stack } from '../components/stack.tsx';
 import { match, P } from 'ts-pattern';
 
 import classes from './decision-simple.module.css';
-import axios from 'axios';
 import { ThemePreference, useTheme } from '../context/theme.provider.tsx';
+import axios from 'axios';
 
 enum DocumentFileTypes {
   Decision = 'application/vnd.gorules.decision',
@@ -142,21 +142,18 @@ export const DecisionSimplePage: React.FC = () => {
   };
 
   const handleOpenMenu = async (e: { key: string }) => {
-    switch (e.key) {
-      case 'file-system':
-        openFile();
-        break;
-      default: {
-        if (Object.hasOwn(decisionTemplates, e.key)) {
-          Modal.confirm({
-            title: 'Open example',
-            icon: false,
-            content: <div>Are you sure you want to open example decision, your current work might be lost?</div>,
-            onOk: async () => loadTemplateGraph(e.key),
-          });
-        }
-        break;
-      }
+    if (e.key === 'file-system') {
+      openFile();
+      return;
+    }
+
+    if (Object.hasOwn(decisionTemplates, e.key)) {
+      Modal.confirm({
+        title: 'Open example',
+        icon: false,
+        content: <div>Are you sure you want to open example decision, your current work might be lost?</div>,
+        onOk: async () => loadTemplateGraph(e.key),
+      });
     }
   };
 
@@ -240,6 +237,7 @@ export const DecisionSimplePage: React.FC = () => {
           }
         }}
       />
+
       <div className={classes.page}>
         <PageHeader
           style={{
@@ -316,6 +314,7 @@ export const DecisionSimplePage: React.FC = () => {
           ghost={false}
           extra={[
             <Button
+              key="extra"
               type={simulatorOpened ? 'primary' : 'default'}
               ghost={simulatorOpened}
               icon={<PlayCircleOutlined />}
@@ -324,6 +323,7 @@ export const DecisionSimplePage: React.FC = () => {
               {simulatorOpened ? 'Close' : 'Open'} Simulator
             </Button>,
             <Dropdown
+              key="theme-menu"
               overlayStyle={{ minWidth: 150 }}
               menu={{
                 onClick: ({ key }) => setThemePreference(key as ThemePreference),
